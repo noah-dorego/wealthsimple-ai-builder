@@ -1,0 +1,155 @@
+import type { ProductKey, SourceAgency } from './types'
+
+export interface ProductTaxonomyEntry {
+  label: string
+  regulatory_domains: SourceAgency[]
+  keywords: string[]
+}
+
+export const PRODUCT_TAXONOMY: Record<ProductKey, ProductTaxonomyEntry> = {
+  RRSP: {
+    label: 'RRSP',
+    regulatory_domains: ['CRA', 'Dept of Finance'],
+    keywords: [
+      'RRSP',
+      'registered retirement savings',
+      'contribution limit',
+      'deduction room',
+      'spousal RRSP',
+      'HBP',
+      'home buyers plan',
+      'LLP',
+      'lifelong learning plan',
+    ],
+  },
+  TFSA: {
+    label: 'TFSA',
+    regulatory_domains: ['CRA', 'Dept of Finance'],
+    keywords: [
+      'TFSA',
+      'tax-free savings account',
+      'contribution room',
+      'over-contribution',
+      'excess TFSA',
+    ],
+  },
+  FHSA: {
+    label: 'FHSA',
+    regulatory_domains: ['CRA', 'Dept of Finance'],
+    keywords: [
+      'FHSA',
+      'first home savings account',
+      'first-time home buyer',
+      'first home savings',
+    ],
+  },
+  TRADING: {
+    label: 'Trading',
+    regulatory_domains: ['CIRO', 'OSC', 'CSA'],
+    keywords: [
+      'securities',
+      'equities',
+      'margin',
+      'brokerage',
+      'dealer',
+      'order execution',
+      'settlement',
+      'short selling',
+      'trading account',
+      'self-directed',
+    ],
+  },
+  CRYPTO: {
+    label: 'Crypto',
+    regulatory_domains: ['CIRO', 'OSC', 'CSA', 'FINTRAC'],
+    keywords: [
+      'cryptocurrency',
+      'bitcoin',
+      'ether',
+      'virtual currency',
+      'digital asset',
+      'stablecoin',
+      'CASP',
+      'crypto asset service provider',
+      'crypto trading',
+    ],
+  },
+  MANAGED_INVESTING: {
+    label: 'Managed Investing',
+    regulatory_domains: ['CIRO', 'OSC', 'CSA'],
+    keywords: [
+      'portfolio management',
+      'managed account',
+      'discretionary',
+      'robo-advisor',
+      'ETF',
+      'suitability',
+      'KYP',
+      'know your product',
+      'managed investing',
+    ],
+  },
+  AML_KYC: {
+    label: 'AML / KYC',
+    regulatory_domains: ['FINTRAC', 'OSFI', 'FCAC'],
+    keywords: [
+      'anti-money laundering',
+      'AML',
+      'KYC',
+      'know your client',
+      'beneficial ownership',
+      'STR',
+      'suspicious transaction report',
+      'LCTR',
+      'large cash transaction',
+      'PEP',
+      'politically exposed person',
+      'proceeds of crime',
+    ],
+  },
+  TAX_FILING: {
+    label: 'Tax Filing',
+    regulatory_domains: ['CRA'],
+    keywords: [
+      'T1',
+      'T4',
+      'T5',
+      'income tax',
+      'tax return',
+      'capital gains',
+      'NETFILE',
+      'filing deadline',
+      'tax slip',
+      'tax filing',
+    ],
+  },
+  CREDIT_CARD: {
+    label: 'Credit Card',
+    regulatory_domains: ['FCAC', 'Dept of Finance'],
+    keywords: [
+      'credit card',
+      'interest rate',
+      'annual fee',
+      'credit limit',
+      'minimum payment',
+      'cardholder',
+      'credit card agreement',
+      'cash advance',
+    ],
+  },
+  CHEQUING: {
+    label: 'Chequing',
+    regulatory_domains: ['FCAC', 'Payments Canada', 'Dept of Finance'],
+    keywords: [
+      'chequing account',
+      'NSF fee',
+      'EFT',
+      'electronic funds transfer',
+      'Interac',
+      'wire transfer',
+      'CDIC',
+      'deposit insurance',
+      'bank account',
+    ],
+  },
+}
