@@ -10,6 +10,7 @@ import type {
   DashboardStats,
   ProductKey,
   FeedSource,
+  FeedSourceCategory,
   FeedItem,
   SourceAgency,
 } from "./types";
@@ -61,6 +62,8 @@ export function getDb(): Database.Database {
       label          TEXT NOT NULL,
       url            TEXT NOT NULL UNIQUE,
       source_agency  TEXT NOT NULL,
+      category       TEXT NOT NULL DEFAULT 'news'
+                     CHECK(category IN ('news', 'publications', 'orders')),
       last_checked_at TEXT,
       created_at     TEXT NOT NULL DEFAULT (datetime('now'))
     );
@@ -91,23 +94,23 @@ export function getDb(): Database.Database {
   db.prepare(`DELETE FROM feed_sources WHERE url IN (${staleUrls.map(() => '?').join(',')})`).run(...staleUrls)
 
   // Seed agency publication sources (idempotent — UNIQUE constraint on url)
-  const seedSources = [
-    { label: 'CRA Newsroom',             agency: 'CRA',             url: 'https://www.canada.ca/en/news/advanced-news-search/news-results.html?typ=newsreleases&dprtmnt=revenueagency' },
-    { label: 'CIRO News Releases',       agency: 'CIRO',            url: 'https://www.ciro.ca/newsroom/news-releases' },
-    { label: 'CIRO Publications',        agency: 'CIRO',            url: 'https://www.ciro.ca/newsroom/publications' },
-    { label: 'OSC Orders & Decisions',   agency: 'OSC',             url: 'https://www.osc.ca/en/securities-law/orders-rulings-decisions' },
-    { label: 'CSA News',                 agency: 'CSA',             url: 'https://www.securities-administrators.ca/news/' },
-    { label: 'FINTRAC Orders',           agency: 'FINTRAC',         url: 'https://fintrac-canafe.canada.ca/pen/4-eng' },
-    { label: 'OSFI News',                agency: 'OSFI',            url: 'https://www.osfi-bsif.gc.ca/en/news' },
-    { label: 'FCAC News',                agency: 'FCAC',            url: 'https://www.canada.ca/en/news/advanced-news-search/news-results.html' },
-    { label: 'Dept of Finance News',     agency: 'Dept-of-Finance', url: 'https://www.canada.ca/en/department-finance/news.html' },
-    { label: 'Payments Canada Newsroom', agency: 'Payments-Canada', url: 'https://www.payments.ca/insights/newsroom' },
+  const seedSources: { label: string; agency: string; url: string; category: FeedSourceCategory }[] = [
+    { label: 'CRA Newsroom',             agency: 'CRA',             category: 'news',         url: 'https://www.canada.ca/en/news/advanced-news-search/news-results.html?typ=newsreleases&dprtmnt=revenueagency' },
+    { label: 'CIRO News Releases',       agency: 'CIRO',            category: 'news',         url: 'https://www.ciro.ca/newsroom/news-releases' },
+    { label: 'CIRO Publications',        agency: 'CIRO',            category: 'publications', url: 'https://www.ciro.ca/newsroom/publications' },
+    { label: 'OSC Orders & Decisions',   agency: 'OSC',             category: 'orders',       url: 'https://www.osc.ca/en/securities-law/orders-rulings-decisions' },
+    { label: 'CSA News',                 agency: 'CSA',             category: 'news',         url: 'https://www.securities-administrators.ca/news/' },
+    { label: 'FINTRAC Orders',           agency: 'FINTRAC',         category: 'orders',       url: 'https://fintrac-canafe.canada.ca/pen/4-eng' },
+    { label: 'OSFI News',                agency: 'OSFI',            category: 'news',         url: 'https://www.osfi-bsif.gc.ca/en/news' },
+    { label: 'FCAC News',                agency: 'FCAC',            category: 'news',         url: 'https://www.canada.ca/en/news/advanced-news-search/news-results.html' },
+    { label: 'Dept of Finance News',     agency: 'Dept-of-Finance', category: 'news',         url: 'https://www.canada.ca/en/department-finance/news.html' },
+    { label: 'Payments Canada Newsroom', agency: 'Payments-Canada', category: 'news',         url: 'https://www.payments.ca/insights/newsroom' },
   ]
   const seedStmt = db.prepare(
-    'INSERT OR IGNORE INTO feed_sources (id, label, url, source_agency, created_at) VALUES (?, ?, ?, ?, ?)'
+    'INSERT OR IGNORE INTO feed_sources (id, label, url, source_agency, category, created_at) VALUES (?, ?, ?, ?, ?, ?)'
   )
   for (const s of seedSources) {
-    seedStmt.run(uuidv4(), s.label, s.url, s.agency, new Date().toISOString())
+    seedStmt.run(uuidv4(), s.label, s.url, s.agency, s.category, new Date().toISOString())
   }
 
   return db;
@@ -295,12 +298,13 @@ export function insertFeedSource(s: {
   label: string
   url: string
   source_agency: SourceAgency
+  category: FeedSourceCategory
 }): string {
   const db = getDb()
   const id = uuidv4()
   db.prepare(
-    'INSERT INTO feed_sources (id, label, url, source_agency, created_at) VALUES (?, ?, ?, ?, ?)'
-  ).run(id, s.label, s.url, s.source_agency, new Date().toISOString())
+    'INSERT INTO feed_sources (id, label, url, source_agency, category, created_at) VALUES (?, ?, ?, ?, ?, ?)'
+  ).run(id, s.label, s.url, s.source_agency, s.category, new Date().toISOString())
   return id
 }
 

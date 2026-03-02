@@ -104,11 +104,14 @@ export interface FindingFilters {
 }
 
 /** A configured regulatory agency publication page to monitor */
+export type FeedSourceCategory = 'news' | 'publications' | 'orders'
+
 export interface FeedSource {
   id: string
   label: string
   url: string
   source_agency: SourceAgency
+  category: FeedSourceCategory
   last_checked_at?: string
   created_at: string
 }
