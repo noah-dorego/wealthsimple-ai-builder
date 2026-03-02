@@ -181,6 +181,7 @@ export function FeedInbox({ items, sources }: Props) {
       {sources.length > 0 && (
         <div className="flex flex-col gap-1.5">
           {/* Category chips */}
+          <p className="text-xs font-medium uppercase tracking-wide" style={{ color: 'var(--text-muted)' }}>Category</p>
           <div className="flex gap-1.5" style={{ overflowX: 'auto', whiteSpace: 'nowrap' }}>
             <button
               onClick={clearFilters}
@@ -209,7 +210,10 @@ export function FeedInbox({ items, sources }: Props) {
             ))}
           </div>
 
+          <hr className="my-2" style={{ borderColor: 'var(--border-subtle)' }} />
+
           {/* Source chips */}
+          <p className="text-xs font-medium uppercase tracking-wide" style={{ color: 'var(--text-muted)' }}>Source</p>
           <div className="flex gap-1.5" style={{ overflowX: 'auto', whiteSpace: 'nowrap' }}>
             {sources.map(source => {
               const isActive = activeSourceIds.has(source.id)
