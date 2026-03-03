@@ -1,4 +1,4 @@
-# RegScope
+# Margin
 
 AI-native regulatory finding impact analyzer for Canadian fintech.
 
@@ -39,7 +39,7 @@ AI-native regulatory finding impact analyzer for Canadian fintech.
    Add `.txt` files to `seed-documents/` following the naming convention:
 
    ```
-   {SOURCE_AGENCY}_{descriptive-title}.txt
+   {SOURCE_REGULATOR}_{descriptive-title}.txt
    ```
 
    Example: `CRA_tfsa-contribution-room-2025.txt`

@@ -2,7 +2,7 @@ import type { ExtractedFinding } from "./types";
 import { PRODUCT_TAXONOMY } from "./taxonomy";
 
 export function buildExtractionSystemPrompt(
-  sourceAgency: string,
+  sourceRegulator: string,
   documentText?: string,
   publishDate?: string,
 ): string {
@@ -11,10 +11,10 @@ export function buildExtractionSystemPrompt(
     : "";
 
   const documentBlock = documentText
-    ? `\n<document>\n  <source_agency>${sourceAgency}</source_agency>${publishDateTag}\n  <text>\n${documentText}\n  </text>\n</document>`
-    : `\n<document>\n  <source_agency>${sourceAgency}</source_agency>${publishDateTag}\n</document>`;
+    ? `\n<document>\n  <source_regulator>${sourceRegulator}</source_regulator>${publishDateTag}\n  <text>\n${documentText}\n  </text>\n</document>`
+    : `\n<document>\n  <source_regulator>${sourceRegulator}</source_regulator>${publishDateTag}\n</document>`;
 
-  return `You are a regulatory compliance analyst specializing in Canadian financial regulation. Your task is to extract all discrete regulatory findings from the provided regulatory document.
+  return `You are a regulatory compliance analyst specializing in Canadian financial regulation. Your task is to extract all discrete regulatory findings from the provided document.
 ${documentBlock}
 
 <rules>
@@ -60,11 +60,18 @@ Return a JSON object matching the AssessmentResult schema exactly.
 <rules>
 - Map affected_products based on keyword matches between the change and the taxonomy
 - Only include products genuinely impacted — do not include all products by default
-- Assign severity (low/medium/high/critical) with a clear rationale explaining your reasoning
+- Assign severity (low/medium/high/critical) with a clear rationale explaining your reasoning. Use the severity scale to help you make the decision.
 - Provide concrete, actionable recommended_actions specific to the change
 - confidence_score should reflect how certain you are about the impact mapping (0.0 to 1.0)
 - Your response must be valid JSON only — no prose, no markdown fences
 </rules>
+
+<severity_scale>
+- critical: the change is likely to have a significant impact on the product line (e.g. rules/regulations that require immediate change to the product)
+- high: the change is likely to have a moderate impact on the product line (e.g. rules/regulations that require change to the product)
+- medium: the change is likely to have a minor impact on the product line (e.g. rules/regulations that should be known)
+- low: the change is likely to have no impact on the product line (e.g. rules/regulations that are not relevant to the product)
+</severity_scale>
 
 <taxonomy>
 ${JSON.stringify(taxonomy, null, 2)}

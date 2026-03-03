@@ -1,6 +1,6 @@
 # Feed Refresh Options — Feasibility Analysis
 
-RegScope's feed checks Canadian regulatory sources for new bulletins. This document evaluates approaches for automating that refresh, from simplest to most complex.
+Margin's feed checks Canadian regulatory sources for new bulletins. This document evaluates approaches for automating that refresh, from simplest to most complex.
 
 ---
 

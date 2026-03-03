@@ -30,6 +30,11 @@ export function CheckAllButton() {
     }
   }, [router])
 
+  // Check all sources once on initial mount (silent)
+  useEffect(() => {
+    checkAll(true)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   // Auto-poll every 10 minutes while the page is open
   useEffect(() => {
     const id = setInterval(() => checkAll(true), POLL_INTERVAL_MS)

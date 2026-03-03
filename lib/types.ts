@@ -1,5 +1,5 @@
-/** Regulatory source agencies */
-export type SourceAgency =
+/** Regulatory source regulators */
+export type SourceRegulator =
   | "CRA"
   | "CIRO"
   | "OSC"
@@ -40,7 +40,7 @@ export type ProductKey =
 export interface RegulatoryDocument {
   id: string;
   title: string;
-  source_agency: SourceAgency;
+  source_regulator: SourceRegulator;
   source_url?: string;
   publish_date?: string;
   raw_text: string;
@@ -53,6 +53,7 @@ export interface RegulatoryDocument {
 export interface RegulatoryFinding {
   id: string;
   document_id: string;
+  source_regulator: SourceRegulator;
   finding_summary: string;
   effective_date?: string;
   severity: Severity;
@@ -99,34 +100,34 @@ export interface DashboardStats {
 /** Filter options for querying regulatory findings */
 export interface FindingFilters {
   severity?: Severity[];
-  source_agency?: SourceAgency;
+  source_regulator?: SourceRegulator;
   product?: ProductKey;
 }
 
-/** A configured regulatory agency publication page to monitor */
-export type FeedSourceCategory = 'news' | 'publications' | 'orders'
-export type FeedSourceType = 'html' | 'rss'
+/** A configured regulatory regulator publication page to monitor */
+export type FeedSourceCategory = "news" | "publications" | "orders";
+export type FeedSourceType = "html" | "rss";
 
 export interface FeedSource {
-  id: string
-  label: string
-  url: string
-  source_agency: SourceAgency
-  category: FeedSourceCategory
-  feed_type: FeedSourceType
-  disabled: boolean
-  last_checked_at?: string
-  created_at: string
+  id: string;
+  label: string;
+  url: string;
+  source_regulator: SourceRegulator;
+  category: FeedSourceCategory;
+  feed_type: FeedSourceType;
+  disabled: boolean;
+  last_checked_at?: string;
+  created_at: string;
 }
 
 /** A discovered link from a feed source */
 export interface FeedItem {
-  id: string
-  source_id: string
-  item_url: string
-  title?: string
-  detected_at: string
-  published_at?: string | null
-  status: 'new' | 'dismissed' | 'ingested'
-  document_id?: string
+  id: string;
+  source_id: string;
+  item_url: string;
+  title?: string;
+  detected_at: string;
+  published_at?: string | null;
+  status: "new" | "dismissed" | "ingested";
+  document_id?: string;
 }

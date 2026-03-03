@@ -1,42 +1,45 @@
-import { getDocument, updateDocumentStatus, insertFinding } from '@/lib/db'
-import { callClaude, parseAIResponse } from '@/lib/claude'
+import { getDocument, updateDocumentStatus, insertFinding } from "@/lib/db";
+import { callClaude, parseAIResponse } from "@/lib/claude";
 import {
   buildExtractionSystemPrompt,
   buildExtractionUserMessage,
   buildAssessmentPrompt,
-} from '@/lib/prompts'
-import { PRODUCT_TAXONOMY } from '@/lib/taxonomy'
-import type { ExtractionResult, AssessmentResult } from '@/lib/types'
+} from "@/lib/prompts";
+import { PRODUCT_TAXONOMY } from "@/lib/taxonomy";
+import type { ExtractionResult, AssessmentResult } from "@/lib/types";
 
 export async function runPipeline(
-  id: string
+  id: string,
 ): Promise<{ findings_extracted: number; findings_failed: number }> {
-  const doc = getDocument(id)
-  if (!doc) throw new Error(`Document not found: ${id}`)
+  const doc = getDocument(id);
+  if (!doc) throw new Error(`Document not found: ${id}`);
 
-  updateDocumentStatus(id, 'pending')
+  updateDocumentStatus(id, "pending");
 
   try {
     // EXTRACTION — one Claude call
-    const isPDF = doc.content_type === 'pdf'
+    const isPDF = doc.content_type === "pdf";
     const systemPrompt = buildExtractionSystemPrompt(
-      doc.source_agency,
+      doc.source_regulator,
       isPDF ? undefined : doc.raw_text,
-      doc.publish_date ?? undefined
-    )
+      doc.publish_date ?? undefined,
+    );
     const rawExtraction = await callClaude(buildExtractionUserMessage(), {
       system: systemPrompt,
       ...(isPDF ? { pdfData: doc.raw_text } : {}),
-    })
-    const extraction = parseAIResponse<ExtractionResult>(rawExtraction)
+    });
+    const extraction = parseAIResponse<ExtractionResult>(rawExtraction);
 
     // ASSESSMENT + PERSIST — one Claude call per finding, sequential
-    let findingsFailed = 0
+    let findingsFailed = 0;
     for (const finding of extraction.findings) {
       try {
-        const assessmentPrompt = buildAssessmentPrompt(finding, PRODUCT_TAXONOMY)
-        const rawAssessment = await callClaude(assessmentPrompt)
-        const assessment = parseAIResponse<AssessmentResult>(rawAssessment)
+        const assessmentPrompt = buildAssessmentPrompt(
+          finding,
+          PRODUCT_TAXONOMY,
+        );
+        const rawAssessment = await callClaude(assessmentPrompt);
+        const assessment = parseAIResponse<AssessmentResult>(rawAssessment);
 
         insertFinding({
           document_id: id,
@@ -48,23 +51,23 @@ export async function runPipeline(
           affected_products: assessment.affected_products,
           recommended_actions: assessment.recommended_actions,
           confidence_score: assessment.confidence_score,
-        })
+        });
       } catch (err) {
         console.error(
-          `Failed to assess/persist finding "${finding.finding_summary}": ${err instanceof Error ? err.message : String(err)}`
-        )
-        findingsFailed++
+          `Failed to assess/persist finding "${finding.finding_summary}": ${err instanceof Error ? err.message : String(err)}`,
+        );
+        findingsFailed++;
       }
     }
 
-    updateDocumentStatus(id, 'processed')
+    updateDocumentStatus(id, "processed");
 
     return {
       findings_extracted: extraction.findings.length,
       findings_failed: findingsFailed,
-    }
+    };
   } catch (err) {
-    updateDocumentStatus(id, 'failed')
-    throw err
+    updateDocumentStatus(id, "failed");
+    throw err;
   }
 }

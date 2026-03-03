@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { getStats, getFindings } from "@/lib/db";
 import { FindingFilters } from "@/components/FindingFilters";
 import { FindingsTable } from "@/components/FindingsTable";
-import type { Severity, SourceAgency, ProductKey } from "@/lib/types";
+import type { Severity, SourceRegulator, ProductKey } from "@/lib/types";
 
 const SEVERITY_LABELS: Record<Severity, string> = {
   critical: "Critical",
@@ -25,16 +25,17 @@ export default async function DashboardPage({
   const params = await searchParams;
 
   const severityParam = str(params.severity);
-  const agencyParam = str(params.source_agency);
+  const regulatorParam = str(params.source_regulator);
   const productParam = str(params.product);
 
   const filters: {
     severity?: Severity[];
-    source_agency?: SourceAgency;
+    source_regulator?: SourceRegulator;
     product?: ProductKey;
   } = {};
   if (severityParam) filters.severity = severityParam.split(",") as Severity[];
-  if (agencyParam) filters.source_agency = agencyParam as SourceAgency;
+  if (regulatorParam)
+    filters.source_regulator = regulatorParam as SourceRegulator;
   if (productParam) filters.product = productParam as ProductKey;
 
   const stats = getStats();

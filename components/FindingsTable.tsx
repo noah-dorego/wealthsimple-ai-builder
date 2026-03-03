@@ -65,15 +65,17 @@ export function FindingsTable({ findings }: { findings: RegulatoryFinding[] }) {
       <table className="w-full text-sm">
         <thead>
           <tr style={{ borderBottom: "1px solid var(--border-subtle)" }}>
-            {["Summary", "Severity", "Products", "Effective"].map((h) => (
-              <th
-                key={h}
-                className="px-4 py-2 text-left text-xs font-medium"
-                style={{ color: "var(--text-muted)" }}
-              >
-                {h}
-              </th>
-            ))}
+            {["Summary", "Regulator", "Severity", "Products", "Effective"].map(
+              (h) => (
+                <th
+                  key={h}
+                  className="px-4 py-2 text-left text-xs font-medium"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  {h}
+                </th>
+              ),
+            )}
           </tr>
         </thead>
         <tbody>
@@ -87,16 +89,26 @@ export function FindingsTable({ findings }: { findings: RegulatoryFinding[] }) {
                 borderLeft: `3px solid ${SEVERITY_BORDER[finding.severity]}`,
               }}
             >
-              {/* Summary + confidence badge */}
+              {/* Summary */}
               <td
                 className="px-4 py-3"
                 style={{ color: "var(--text-primary)", maxWidth: 360 }}
               >
-                <div className="flex items-center gap-2">
-                  <span className="line-clamp-1 flex-1 min-w-0">
-                    {finding.finding_summary}
-                  </span>
-                </div>
+                <span className="line-clamp-1">{finding.finding_summary}</span>
+              </td>
+
+              {/* Regulator */}
+              <td className="px-4 py-3 whitespace-nowrap">
+                <span
+                  className="text-xs font-mono px-1.5 py-0.5 rounded"
+                  style={{
+                    backgroundColor: "var(--bg-elevated)",
+                    color: "var(--text-secondary)",
+                    border: "1px solid var(--border-subtle)",
+                  }}
+                >
+                  {finding.source_regulator}
+                </span>
               </td>
 
               {/* Severity */}

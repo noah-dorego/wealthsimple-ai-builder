@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS regulatory_documents (
   id TEXT PRIMARY KEY,
   title TEXT NOT NULL,
-  source_agency TEXT NOT NULL,
+  source_regulator TEXT NOT NULL,
   source_url TEXT,
   publish_date TEXT,
   raw_text TEXT NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS feed_sources (
   id             TEXT PRIMARY KEY,
   label          TEXT NOT NULL,
   url            TEXT NOT NULL UNIQUE,
-  source_agency  TEXT NOT NULL,
+  source_regulator  TEXT NOT NULL,
   last_checked_at TEXT,
   created_at     TEXT NOT NULL DEFAULT (datetime('now'))
 );

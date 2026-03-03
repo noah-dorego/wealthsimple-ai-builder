@@ -1,27 +1,27 @@
-import Link from 'next/link'
-import { notFound } from 'next/navigation'
-import { getFinding, getDocument } from '@/lib/db'
-import { severityColor, formatDate } from '@/lib/utils'
-import type { Severity } from '@/lib/types'
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { getFinding, getDocument } from "@/lib/db";
+import { severityColor, formatDate } from "@/lib/utils";
+import type { Severity } from "@/lib/types";
 
 const SEVERITY_LABELS: Record<Severity, string> = {
-  critical: 'Critical',
-  high: 'High',
-  medium: 'Medium',
-  low: 'Low',
-}
+  critical: "Critical",
+  high: "High",
+  medium: "Medium",
+  low: "Low",
+};
 
 interface Props {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }
 
 export default async function FindingDetailPage({ params }: Props) {
-  const { id } = await params
-  const finding = getFinding(id)
-  if (!finding) notFound()
+  const { id } = await params;
+  const finding = getFinding(id);
+  if (!finding) notFound();
 
-  const doc = getDocument(finding.document_id)
-  const score = finding.confidence_score
+  const doc = getDocument(finding.document_id);
+  const score = finding.confidence_score;
 
   return (
     <div className="p-6 max-w-3xl space-y-6">
@@ -29,7 +29,7 @@ export default async function FindingDetailPage({ params }: Props) {
       <Link
         href="/"
         className="inline-flex items-center gap-1 text-xs hover:underline"
-        style={{ color: 'var(--text-muted)' }}
+        style={{ color: "var(--text-muted)" }}
       >
         ← Back to Dashboard
       </Link>
@@ -41,7 +41,10 @@ export default async function FindingDetailPage({ params }: Props) {
         >
           {SEVERITY_LABELS[finding.severity]}
         </span>
-        <h1 className="text-lg font-semibold leading-snug" style={{ color: 'var(--text-primary)' }}>
+        <h1
+          className="text-lg font-semibold leading-snug"
+          style={{ color: "var(--text-primary)" }}
+        >
           {finding.finding_summary}
         </h1>
       </div>
@@ -51,29 +54,36 @@ export default async function FindingDetailPage({ params }: Props) {
         <div
           className="rounded-lg border px-4 py-3 text-sm"
           style={{
-            backgroundColor: 'color-mix(in srgb, var(--severity-medium) 12%, transparent)',
-            borderColor: 'var(--severity-medium)',
-            color: 'var(--severity-medium)',
+            backgroundColor:
+              "color-mix(in srgb, var(--severity-medium) 12%, transparent)",
+            borderColor: "var(--severity-medium)",
+            color: "var(--severity-medium)",
           }}
         >
-          ⚠ Low confidence ({score.toFixed(2)}) — human review recommended before acting on this assessment.
+          ⚠ Low confidence ({score.toFixed(2)}) — human review recommended
+          before acting on this assessment.
         </div>
       )}
 
       {/* Metadata */}
       <div
         className="rounded-lg border p-4 grid grid-cols-2 gap-x-8 gap-y-3"
-        style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-surface)' }}
+        style={{
+          borderColor: "var(--border-subtle)",
+          backgroundColor: "var(--bg-surface)",
+        }}
       >
         <MetaRow label="Effective date">
-          {finding.effective_date ? formatDate(finding.effective_date) : 'Not specified'}
+          {finding.effective_date
+            ? formatDate(finding.effective_date)
+            : "Not specified"}
         </MetaRow>
         <MetaRow label="Confidence">
           {score != null ? (
             <div className="flex items-center gap-2">
               <div
                 className="w-20 h-1.5 rounded-full overflow-hidden"
-                style={{ backgroundColor: 'var(--bg-elevated)' }}
+                style={{ backgroundColor: "var(--bg-elevated)" }}
               >
                 <div
                   className="h-full rounded-full"
@@ -81,19 +91,22 @@ export default async function FindingDetailPage({ params }: Props) {
                     width: `${(score * 100).toFixed(0)}%`,
                     backgroundColor:
                       score >= 0.85
-                        ? 'var(--severity-low)'
+                        ? "var(--severity-low)"
                         : score >= 0.7
-                          ? 'var(--severity-medium)'
-                          : 'var(--severity-high)',
+                          ? "var(--severity-medium)"
+                          : "var(--severity-high)",
                   }}
                 />
               </div>
-              <span className="text-xs tabular-nums" style={{ color: 'var(--text-secondary)' }}>
+              <span
+                className="text-xs tabular-nums"
+                style={{ color: "var(--text-secondary)" }}
+              >
                 {score.toFixed(2)}
               </span>
             </div>
           ) : (
-            '—'
+            "—"
           )}
         </MetaRow>
         <MetaRow label="Products">
@@ -104,21 +117,21 @@ export default async function FindingDetailPage({ params }: Props) {
                     key={p}
                     className="rounded px-1.5 py-0.5 text-xs"
                     style={{
-                      backgroundColor: 'var(--bg-elevated)',
-                      color: 'var(--text-secondary)',
-                      border: '1px solid var(--border-subtle)',
+                      backgroundColor: "var(--bg-elevated)",
+                      color: "var(--text-secondary)",
+                      border: "1px solid var(--border-subtle)",
                     }}
                   >
                     {p}
                   </span>
                 ))
-              : '—'}
+              : "—"}
           </div>
         </MetaRow>
-        <MetaRow label="Agency">{doc?.source_agency ?? '—'}</MetaRow>
+        <MetaRow label="Regulator">{doc?.source_regulator ?? "—"}</MetaRow>
         {doc && (
           <MetaRow label="Document" className="col-span-2">
-            <span style={{ color: 'var(--text-secondary)' }}>{doc.title}</span>
+            <span style={{ color: "var(--text-secondary)" }}>{doc.title}</span>
           </MetaRow>
         )}
       </div>
@@ -131,7 +144,10 @@ export default async function FindingDetailPage({ params }: Props) {
               <blockquote
                 key={i}
                 className="border-l-2 pl-4 text-sm italic"
-                style={{ borderColor: 'var(--border-default)', color: 'var(--text-secondary)' }}
+                style={{
+                  borderColor: "var(--border-default)",
+                  color: "var(--text-secondary)",
+                }}
               >
                 {quote}
               </blockquote>
@@ -145,8 +161,17 @@ export default async function FindingDetailPage({ params }: Props) {
         <Section title="Recommended Actions">
           <ul className="space-y-2">
             {finding.recommended_actions.map((action, i) => (
-              <li key={i} className="flex gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
-                <span className="flex-shrink-0" style={{ color: 'var(--accent-blue)' }}>→</span>
+              <li
+                key={i}
+                className="flex gap-2 text-sm"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                <span
+                  className="flex-shrink-0"
+                  style={{ color: "var(--accent-blue)" }}
+                >
+                  →
+                </span>
                 {action}
               </li>
             ))}
@@ -157,39 +182,52 @@ export default async function FindingDetailPage({ params }: Props) {
       {/* Severity Rationale */}
       {finding.severity_rationale && (
         <Section title="Severity Rationale">
-          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
             {finding.severity_rationale}
           </p>
         </Section>
       )}
     </div>
-  )
+  );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="space-y-3">
-      <h2 className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
+      <h2
+        className="text-xs font-semibold uppercase tracking-wider"
+        style={{ color: "var(--text-muted)" }}
+      >
         {title}
       </h2>
       {children}
     </div>
-  )
+  );
 }
 
 function MetaRow({
   label,
   children,
-  className = '',
+  className = "",
 }: {
-  label: string
-  children: React.ReactNode
-  className?: string
+  label: string;
+  children: React.ReactNode;
+  className?: string;
 }) {
   return (
     <div className={className}>
-      <div className="text-xs mb-1" style={{ color: 'var(--text-muted)' }}>{label}</div>
-      <div className="text-sm" style={{ color: 'var(--text-primary)' }}>{children}</div>
+      <div className="text-xs mb-1" style={{ color: "var(--text-muted)" }}>
+        {label}
+      </div>
+      <div className="text-sm" style={{ color: "var(--text-primary)" }}>
+        {children}
+      </div>
     </div>
-  )
+  );
 }
