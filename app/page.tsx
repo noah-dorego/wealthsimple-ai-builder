@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Suspense } from "react";
 import { getStats, getFindings } from "@/lib/db";
 import { FindingFilters } from "@/components/FindingFilters";

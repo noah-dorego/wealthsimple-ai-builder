@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getFeedSources, getFeedItems } from "@/lib/db";
 import { FeedInbox } from "@/components/FeedInbox";
 import { FeedSourceList } from "@/components/FeedSourceList";
