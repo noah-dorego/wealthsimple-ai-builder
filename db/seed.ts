@@ -24,7 +24,7 @@ function kebabToTitle(slug: string): string {
     .join(" ");
 }
 
-async function seed() {
+export async function seed() {
   if (!fs.existsSync(SEED_DIR)) {
     console.error(`seed-documents/ directory not found at ${SEED_DIR}`);
     process.exit(1);
@@ -102,7 +102,10 @@ async function seed() {
   );
 }
 
-seed().catch((err) => {
-  console.error("Seed script error:", err);
-  process.exit(1);
-});
+// Only run when executed directly (npm run seed)
+if (process.argv[1]?.endsWith("seed.ts") || process.argv[1]?.endsWith("seed.js")) {
+  seed().catch((err) => {
+    console.error("Seed script error:", err);
+    process.exit(1);
+  });
+}
